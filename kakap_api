@@ -1,0 +1,31 @@
+# 라이브러리 가져오기
+import pandas as pd
+import requests
+my_key = "c45514a4a381df3c19cb5ba7f4ead709"
+# Kakao Map API 통해 위도, 경도 데이터 가져오는 함수를 정의
+def get_geocoding(place):
+ url = f"https://dapi.kakao.com/v2/local/search/address.json?query={place}"
+ headers = {"Authorization": f"KakaoAK {my_key}"}
+ response = requests.get(url, headers=headers)
+ result = response.json()
+ return result["documents"][0]["y"], result["documents"][0]["x"]
+
+lat = []  #위도
+lng = []  #경도
+# 장소(주소) 리스트
+places = ["인천 미추홀구 소성로 71", "서울 성북구 보문로 168 성북구청"]
+i=0
+for place in places:   
+  i = i + 1
+  try:
+    print(i, place)
+    # get_geocoding 함수의 리턴값 호출하여 geo_location 변수에 저장
+    place_lat, place_lon = get_geocoding(place)
+    lat.append(place_lat)
+    lng.append(place_lon)
+  except:
+    lat.append('')
+    lng.append('')
+ # 데이터프레임으로 변환하기
+df = pd.DataFrame({'위도':lat, '경도':lng}, index=places)
+df
